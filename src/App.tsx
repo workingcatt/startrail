@@ -125,11 +125,12 @@ export default function App() {
       {/* BGM Player - Native Audio with event-based state sync */}
       <audio
         ref={audioRef}
-        src="https://working-cat.org/music/%EC%8A%A4%ED%83%80%ED%8A%B8%EB%A0%88%EC%9D%BC.mp3"
         loop
         preload="auto"
         crossOrigin="anonymous"
-      />
+      >
+        <source src="https://working-cat.org/music/%EC%8A%A4%ED%83%80%ED%8A%B8%EB%A0%88%EC%9D%BC.mp3" type="audio/mpeg" />
+      </audio>
 
       <AnimatePresence>
         {!entered && (
