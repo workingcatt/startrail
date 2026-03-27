@@ -81,7 +81,7 @@ export default function Worldview() {
         </motion.p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-32">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center mb-20 lg:mb-32">
         <motion.div 
           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -95,12 +95,12 @@ export default function Worldview() {
             className="w-full h-full object-cover opacity-80 scale-105 mix-blend-multiply"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent" />
-          <div className="absolute bottom-8 left-8 right-8">
-            <h3 className="text-3xl font-black tracking-[0.1em] mb-2 flex items-center gap-2 text-slate-900 drop-shadow-sm">
-              <Sparkles className="text-cyan-500 w-8 h-8" />
+          <div className="absolute bottom-4 left-4 right-4 md:bottom-8 md:left-8 md:right-8">
+            <h3 className="text-xl md:text-3xl font-black tracking-[0.1em] mb-2 flex items-center gap-2 text-slate-900 drop-shadow-sm">
+              <Sparkles className="text-cyan-500 w-6 h-6 md:w-8 md:h-8" />
               스타트레일 특수 아카데미
             </h3>
-            <p className="text-slate-600 font-medium bg-white/90 p-3 backdrop-blur-sm border border-cyan-200 game-panel-sm shadow-sm">
+            <p className="text-xs md:text-base text-slate-600 font-medium bg-white/90 p-2 md:p-3 backdrop-blur-sm border border-cyan-200 game-panel-sm shadow-sm">
               특수 학생들을 교육하고 그들의 잃어버린 꿈을 일깨워주기 위한 비밀 기관.
             </p>
           </div>

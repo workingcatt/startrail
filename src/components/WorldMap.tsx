@@ -11,7 +11,7 @@ const locations = [
     icon: <Train className="w-8 h-8" />,
     color: 'text-cyan-400',
     borderColor: 'border-cyan-500/50',
-    bgImage: 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?q=80&w=1000&auto=format&fit=crop'
+    bgImage: 'https://working-cat.org/startrail/BACK/%EC%8A%A4%ED%83%80%ED%8A%B8%EB%A0%88%EC%9D%BC%20%EC%95%84%EC%B9%B4%EB%8D%B0%EB%AF%B81.png'
   },
   {
     id: 'luminaris',
@@ -21,7 +21,7 @@ const locations = [
     icon: <Sun className="w-8 h-8" />,
     color: 'text-amber-400',
     borderColor: 'border-amber-500/50',
-    bgImage: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=1000&auto=format&fit=crop'
+    bgImage: 'https://working-cat.org/startrail/BACK/%EB%A3%A8%EB%AF%B8%EB%82%98%EB%A6%AC%EC%8A%A4.png'
   },
   {
     id: 'noctis',
@@ -31,7 +31,7 @@ const locations = [
     icon: <Moon className="w-8 h-8" />,
     color: 'text-indigo-400',
     borderColor: 'border-indigo-500/50',
-    bgImage: 'https://images.unsplash.com/photo-1555617783-d25082121b36?q=80&w=1000&auto=format&fit=crop'
+    bgImage: 'https://working-cat.org/startrail/BACK/%EB%85%B9%ED%8B%B0%EC%8A%A4.png'
   },
   {
     id: 'yamyeong',
@@ -41,7 +41,7 @@ const locations = [
     icon: <MapPin className="w-8 h-8" />,
     color: 'text-emerald-400',
     borderColor: 'border-emerald-500/50',
-    bgImage: 'https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?q=80&w=1000&auto=format&fit=crop'
+    bgImage: 'https://working-cat.org/startrail/BACK/%EC%95%BC%EB%AA%85%EC%84%B1.png'
   },
   {
     id: 'magicworld',
@@ -51,7 +51,7 @@ const locations = [
     icon: <Castle className="w-8 h-8" />,
     color: 'text-fuchsia-400',
     borderColor: 'border-fuchsia-500/50',
-    bgImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1000&auto=format&fit=crop'
+    bgImage: 'https://working-cat.org/startrail/BACK/%EB%A7%A4%EC%A7%81%EC%9B%94%EB%93%9C.png'
   },
   {
     id: 'unknown',
@@ -61,7 +61,7 @@ const locations = [
     icon: <Skull className="w-8 h-8" />,
     color: 'text-rose-400',
     borderColor: 'border-rose-500/50',
-    bgImage: 'https://images.unsplash.com/photo-1505506874110-6a7a6c9924c7?q=80&w=1000&auto=format&fit=crop'
+    bgImage: 'https://working-cat.org/startrail/BACK/%EC%96%B8%EB%85%B8%EC%9A%B4.png'
   }
 ];
 
@@ -79,14 +79,14 @@ export default function WorldMap() {
         <div className="h-[1px] w-32 bg-gradient-to-r from-transparent via-cyan-500 to-transparent mx-auto" />
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 h-[600px]">
+      <div className="flex flex-col lg:flex-row gap-8 h-auto">
         {/* Map List */}
-        <div className="w-full lg:w-1/3 flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar">
+        <div className="w-full lg:w-1/3 flex flex-row lg:flex-col gap-4 overflow-x-auto lg:overflow-y-auto pr-2 custom-scrollbar pb-4">
           {locations.map((loc) => (
             <button
               key={loc.id}
               onClick={() => setActiveLocation(loc)}
-              className={`p-4 text-left transition-all duration-300 border game-button ${
+              className={`p-4 text-left transition-all duration-300 border game-button flex-shrink-0 w-64 lg:w-full ${
                 activeLocation.id === loc.id 
                   ? `bg-cyan-50 border-cyan-500 shadow-sm` 
                   : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-cyan-300'
@@ -106,7 +106,7 @@ export default function WorldMap() {
         </div>
 
         {/* Map Detail */}
-        <div className="w-full lg:w-2/3 relative overflow-hidden border border-cyan-200 shadow-md group game-panel bg-white">
+        <div className="w-full lg:w-2/3 relative overflow-hidden border border-cyan-200 shadow-md group game-panel bg-white h-[400px] lg:h-[600px]">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeLocation.id}
@@ -122,20 +122,20 @@ export default function WorldMap() {
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover opacity-80 mix-blend-multiply transition-transform duration-1000 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent" />
               
-              <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
+              <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  <div className={`inline-flex items-center gap-2 px-4 py-1 bg-white/90 backdrop-blur-md border border-cyan-200 mb-4 ${activeLocation.color ? activeLocation.color.replace('400', '600') : 'text-cyan-600'} shadow-sm game-button`}>
+                  <div className={`inline-flex items-center gap-2 px-2 py-0.5 bg-slate-900/80 backdrop-blur-sm border border-cyan-500/30 mb-2 ${activeLocation.color ? activeLocation.color.replace('400', '400') : 'text-cyan-400'} shadow-sm`}>
                     {activeLocation.icon}
-                    <span className="text-sm font-mono tracking-[0.2em] uppercase">{activeLocation.subtitle}</span>
+                    <span className="text-[10px] md:text-xs font-mono tracking-[0.1em] uppercase">{activeLocation.subtitle}</span>
                   </div>
-                  <h3 className="text-4xl md:text-5xl font-black tracking-[0.1em] mb-4 text-slate-900 drop-shadow-sm">{activeLocation.name}</h3>
-                  <p className="text-slate-700 text-lg leading-relaxed max-w-2xl font-medium bg-white/80 p-4 backdrop-blur-sm border border-slate-200 game-panel-sm shadow-sm">
+                  <h3 className="text-xl md:text-4xl font-black tracking-[0.05em] mb-1 md:mb-2 text-white drop-shadow-md">{activeLocation.name}</h3>
+                  <p className="text-slate-200 text-[10px] md:text-sm leading-relaxed max-w-2xl font-medium bg-slate-900/60 p-2 md:p-3 backdrop-blur-sm border border-white/10 shadow-sm line-clamp-4 md:line-clamp-4">
                     {activeLocation.desc}
                   </p>
                 </motion.div>

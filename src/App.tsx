@@ -23,51 +23,42 @@ export default function App() {
   const [entered, setEntered] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Sync state with audio element events for maximum stability
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
-
-    const handlePlay = () => {
-      console.log("BGM started playing");
-      setIsPlaying(true);
-    };
-    const handlePause = () => {
-      console.log("BGM paused");
-      setIsPlaying(false);
-    };
-    const handleError = (e: any) => {
-      const error = audio.error;
-      console.error("Audio element error:", error?.code, error?.message, e);
-      setIsPlaying(false);
-    };
-
-    audio.addEventListener('play', handlePlay);
-    audio.addEventListener('pause', handlePause);
-    audio.addEventListener('error', handleError);
-
-    // Initial sync if already playing/paused
-    setIsPlaying(!audio.paused);
-
-    return () => {
-      audio.removeEventListener('play', handlePlay);
-      audio.removeEventListener('pause', handlePause);
-      audio.removeEventListener('error', handleError);
-    };
-  }, []);
+    if (audio) {
+      audio.volume = 0.4;
+      
+      // Global click listener to start audio if paused (browser autoplay policy)
+      const handleGlobalClick = () => {
+        if (audio.paused && isPlaying) {
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(e => console.error("Autoplay failed:", e));
+          }
+        }
+      };
+      document.addEventListener('click', handleGlobalClick);
+      
+      return () => {
+        document.removeEventListener('click', handleGlobalClick);
+      };
+    }
+  }, [isPlaying]);
 
   const handleEnter = () => {
     setEntered(true);
-    // Small delay to ensure the transition starts smoothly before audio kicks in
-    setTimeout(() => {
-      if (audioRef.current) {
-        audioRef.current.volume = 0.4;
-        audioRef.current.play().catch(err => {
-          console.warn("Initial playback failed (likely autoplay policy):", err);
-          // Don't crash, just log it. The user can still use the toggle.
+    const audio = audioRef.current;
+    if (audio) {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          setIsPlaying(true);
+        }).catch(e => {
+          console.log("Autoplay blocked, user interaction required");
+          setIsPlaying(false);
         });
       }
-    }, 100);
+    }
   };
 
   const toggleBGM = (e?: React.MouseEvent) => {
@@ -75,26 +66,19 @@ export default function App() {
       e.preventDefault();
       e.stopPropagation();
     }
-    
     const audio = audioRef.current;
-    if (!audio) {
-      console.warn("Audio ref not found during toggle");
-      return;
-    }
-    
-    try {
+    if (audio) {
       if (audio.paused) {
         const playPromise = audio.play();
         if (playPromise !== undefined) {
-          playPromise.catch(err => {
-            console.error("Manual play failed:", err);
-          });
+          playPromise.then(() => {
+            setIsPlaying(true);
+          }).catch(e => console.error("Play failed", e));
         }
       } else {
         audio.pause();
+        setIsPlaying(false);
       }
-    } catch (err) {
-      console.error("Error toggling BGM:", err);
     }
   };
 
@@ -125,12 +109,13 @@ export default function App() {
       {/* BGM Player - Native Audio with event-based state sync */}
       <audio
         ref={audioRef}
+        src="https://working-cat.org/music/스타트레일.mp3"
         loop
         preload="auto"
         crossOrigin="anonymous"
-      >
-        <source src="https://working-cat.org/music/%EC%8A%A4%ED%83%80%ED%8A%B8%EB%A0%88%EC%9D%BC.mp3" type="audio/mpeg" />
-      </audio>
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+      />
 
       <AnimatePresence>
         {!entered && (
@@ -184,7 +169,7 @@ export default function App() {
               
               <button
                 onClick={handleEnter}
-                className="game-button relative group overflow-hidden bg-cyan-500 text-white px-16 py-5 font-bold tracking-[0.2em] text-lg hover:bg-cyan-400 transition-all duration-300 shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:shadow-[0_0_50px_rgba(6,182,212,0.6)] hover:-translate-y-1"
+                className="game-button relative group overflow-hidden bg-cyan-500 text-white px-10 py-4 md:px-16 md:py-5 font-bold tracking-[0.2em] text-base md:text-lg hover:bg-cyan-400 transition-all duration-300 shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:shadow-[0_0_50px_rgba(6,182,212,0.6)] hover:-translate-y-1"
               >
                 <span className="relative z-10 flex items-center gap-3">
                   BOARD TRAIN <TrainFront className="w-5 h-5 group-hover:animate-bounce" />
