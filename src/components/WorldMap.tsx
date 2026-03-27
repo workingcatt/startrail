@@ -106,7 +106,7 @@ export default function WorldMap() {
         </div>
 
         {/* Map Detail */}
-        <div className="w-full lg:w-2/3 relative overflow-hidden border border-cyan-200 shadow-md group game-panel bg-white h-[400px] lg:h-[600px]">
+        <div className="w-full lg:w-2/3 relative overflow-hidden border border-cyan-200 shadow-md group game-panel bg-white aspect-video">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeLocation.id}

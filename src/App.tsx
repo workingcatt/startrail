@@ -28,57 +28,63 @@ export default function App() {
     if (audio) {
       audio.volume = 0.4;
       
+      // Sync state with actual audio state
+      const syncState = () => {
+        setIsPlaying(!audio.paused);
+      };
+
+      audio.addEventListener('play', syncState);
+      audio.addEventListener('pause', syncState);
+      audio.addEventListener('ended', syncState);
+
       // Global click listener to start audio if paused (browser autoplay policy)
       const handleGlobalClick = () => {
         if (audio.paused && isPlaying) {
-          const playPromise = audio.play();
-          if (playPromise !== undefined) {
-            playPromise.catch(e => console.error("Autoplay failed:", e));
-          }
+          audio.play().catch(e => console.error("Autoplay failed:", e));
         }
       };
       document.addEventListener('click', handleGlobalClick);
       
       return () => {
+        audio.removeEventListener('play', syncState);
+        audio.removeEventListener('pause', syncState);
+        audio.removeEventListener('ended', syncState);
         document.removeEventListener('click', handleGlobalClick);
       };
     }
   }, [isPlaying]);
 
+  // BGM Logic
+  const toggleBGM = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (audio.paused) {
+      audio.play()
+        .then(() => setIsPlaying(true))
+        .catch(e => {
+          console.error("Play failed", e);
+          setIsPlaying(false);
+        });
+    } else {
+      audio.pause();
+      setIsPlaying(false);
+    }
+  };
+
   const handleEnter = () => {
     setEntered(true);
     const audio = audioRef.current;
     if (audio) {
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          setIsPlaying(true);
-        }).catch(e => {
-          console.log("Autoplay blocked, user interaction required");
-          setIsPlaying(false);
+      // Attempt to play immediately on enter
+      audio.play()
+        .then(() => setIsPlaying(true))
+        .catch(e => {
+          console.error("Autoplay blocked", e);
+          // We don't set isPlaying to false here because the global click handler 
+          // will try to play it again on the next click if isPlaying is true
+          setIsPlaying(true); 
         });
-      }
-    }
-  };
-
-  const toggleBGM = (e?: React.MouseEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    const audio = audioRef.current;
-    if (audio) {
-      if (audio.paused) {
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-          playPromise.then(() => {
-            setIsPlaying(true);
-          }).catch(e => console.error("Play failed", e));
-        }
-      } else {
-        audio.pause();
-        setIsPlaying(false);
-      }
     }
   };
 
@@ -109,12 +115,9 @@ export default function App() {
       {/* BGM Player - Native Audio with event-based state sync */}
       <audio
         ref={audioRef}
-        src="https://working-cat.org/music/스타트레일.mp3"
+        src="https://working-cat.org/music/%EC%8A%A4%ED%83%80%ED%8A%B8%EB%A0%88%EC%9D%BC.mp3"
         loop
         preload="auto"
-        crossOrigin="anonymous"
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
       />
 
       <AnimatePresence>
@@ -183,7 +186,7 @@ export default function App() {
 
               {/* Intro BGM Toggle */}
               <button 
-                onClick={(e) => toggleBGM(e)}
+                onClick={toggleBGM}
                 className="mt-8 flex items-center gap-2 px-4 py-2 border border-white/20 hover:border-cyan-500/50 text-white/70 hover:text-cyan-400 transition-all bg-white/5 backdrop-blur-sm font-mono text-[10px] font-bold tracking-widest uppercase"
               >
                 {isPlaying ? (
@@ -243,7 +246,7 @@ export default function App() {
                 {/* BGM Toggle - Restored to Header */}
                 <div className="flex items-center gap-2 ml-4">
                   <button 
-                    onClick={(e) => toggleBGM(e)}
+                    onClick={toggleBGM}
                     className="flex items-center gap-2 px-3 py-1.5 border border-slate-200 hover:border-cyan-500 text-cyan-600 transition-all bg-white shadow-sm font-mono text-[10px] font-bold tracking-widest"
                     title="Toggle BGM"
                   >
@@ -263,7 +266,7 @@ export default function App() {
               {/* Mobile Nav Toggle */}
               <div className="md:hidden flex items-center gap-3">
                 <button 
-                  onClick={(e) => toggleBGM(e)} 
+                  onClick={toggleBGM} 
                   className="flex items-center gap-1.5 text-cyan-600 px-2.5 py-1.5 border border-slate-200 bg-white shadow-sm font-mono text-[10px] font-bold tracking-wider"
                 >
                   {isPlaying ? (

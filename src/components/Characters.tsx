@@ -62,8 +62,8 @@ export default function Characters() {
   const [selectedChar, setSelectedChar] = useState<any>(null);
 
   const getRandomImage = (code: string) => {
-    const randomNum = Math.floor(Math.random() * 7) + 1;
-    return `https://working-cat.org/startrail/${code}/${randomNum}.png`;
+    // Return 1.png as the initial image
+    return `https://working-cat.org/startrail/${code}/1.png`;
   };
 
   return (
@@ -138,7 +138,7 @@ export default function Characters() {
                 <X size={20} />
               </button>
               <div className="flex flex-col md:flex-row gap-4 md:gap-6">
-                <div className="w-full md:w-1/3 aspect-[3/4] overflow-hidden bg-slate-100 rounded-lg border-2 md:border-4 border-slate-900">
+                <div className="w-full md:w-1/3 aspect-video overflow-hidden bg-slate-100 rounded-lg border-2 md:border-4 border-slate-900">
                   <img 
                     src={getRandomImage(selectedChar.code)} 
                     alt={selectedChar.name}
@@ -169,8 +169,12 @@ export default function Characters() {
                   </div>
 
                   <div className="bg-slate-100 p-2 md:p-3 rounded border border-slate-300">
-                    <h4 className="font-bold text-slate-900 mb-0.5 text-xs md:text-sm border-b border-slate-300 pb-0.5">Profile</h4>
-                    <p className="text-slate-700 leading-relaxed text-[11px] md:text-xs">{selectedChar.desc}</p>
+                    <h4 className="font-bold text-slate-900 mb-1 text-xs md:text-sm border-b border-slate-300 pb-0.5">Profile</h4>
+                    <ul className="text-slate-700 leading-relaxed text-[11px] md:text-xs list-disc pl-4 space-y-0.5">
+                      {selectedChar.desc.split('|').map((item: string, index: number) => (
+                        <li key={index}>{item.trim()}</li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </div>

@@ -9,9 +9,9 @@ const webtoonImages = [
 
 export default function Webtoon() {
   return (
-    <div className="bg-slate-950 min-h-screen py-10">
-      <div className="max-w-3xl mx-auto px-4">
-        <div className="text-center mb-10">
+    <div className="bg-slate-950">
+      <div className="max-w-3xl mx-auto px-4 pb-10">
+        <div className="text-center mb-10 pt-10">
           <h2 className="text-3xl font-black tracking-[0.2em] text-white mb-2">WEBTOON</h2>
           <div className="h-[1px] w-20 bg-cyan-500 mx-auto" />
         </div>
