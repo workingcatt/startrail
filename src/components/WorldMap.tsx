@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Train, Moon, Sun, Castle, Skull, MapPin } from 'lucide-react';
 
@@ -67,38 +68,49 @@ const locations = [
 
 export default function WorldMap() {
   const [activeLocation, setActiveLocation] = useState(locations[0]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-6 relative bg-slate-50 min-h-screen py-20">
-      <div className="text-center mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 border border-cyan-500/50 bg-white/80 text-cyan-600 text-xs font-mono tracking-[0.3em] mb-6 backdrop-blur-sm shadow-sm">
+    <div className="max-w-7xl mx-auto px-4 md:px-6 relative bg-slate-50 min-h-0 md:min-h-screen py-8 md:py-20">
+      <div className="text-center mb-6 md:mb-16">
+        <div className="inline-flex items-center gap-2 px-3 py-1 border border-cyan-500/50 bg-white/80 text-cyan-600 text-[10px] md:text-xs font-mono tracking-[0.3em] mb-4 md:mb-6 backdrop-blur-sm shadow-sm">
           <span className="w-2 h-2 bg-cyan-500 animate-pulse"></span>
           DATABASE: LOCATIONS
         </div>
-        <h2 className="text-4xl md:text-5xl font-black tracking-[0.2em] mb-6 text-slate-900 drop-shadow-sm">MAP & FACTIONS</h2>
-        <div className="h-[1px] w-32 bg-gradient-to-r from-transparent via-cyan-500 to-transparent mx-auto" />
+        <h2 className="text-3xl md:text-5xl font-black tracking-[0.2em] mb-4 md:mb-6 text-slate-900 drop-shadow-sm">MAP & FACTIONS</h2>
+        <div className="h-[1px] w-24 md:w-32 bg-gradient-to-r from-transparent via-cyan-500 to-transparent mx-auto" />
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 h-auto">
+      <div className="flex flex-col lg:flex-row gap-6 md:gap-8 h-auto">
         {/* Map List */}
-        <div className="w-full lg:w-1/3 flex flex-row lg:flex-col gap-4 overflow-x-auto lg:overflow-y-auto pr-2 custom-scrollbar pb-4">
+        <div className="w-full lg:w-1/3 flex flex-row lg:flex-col gap-3 md:gap-4 overflow-x-auto lg:overflow-y-auto pr-2 custom-scrollbar pb-4 snap-x">
           {locations.map((loc) => (
             <button
               key={loc.id}
-              onClick={() => setActiveLocation(loc)}
-              className={`p-4 text-left transition-all duration-300 border game-button flex-shrink-0 w-64 lg:w-full ${
+              onClick={() => {
+                setActiveLocation(loc);
+                // On mobile, clicking a location in the list doesn't open modal immediately, 
+                // it just changes the active view. They click the image to open modal.
+              }}
+              className={`p-3 md:p-4 text-left transition-all duration-300 border game-button flex-shrink-0 w-60 md:w-64 lg:w-full snap-start ${
                 activeLocation.id === loc.id 
                   ? `bg-cyan-50 border-cyan-500 shadow-sm` 
                   : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-cyan-300'
               } backdrop-blur-md`}
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 md:gap-4">
                 <div className={`p-2 border border-slate-200 bg-white ${loc.color.replace('400', '600')} game-panel-sm shadow-sm`}>
                   {loc.icon}
                 </div>
                 <div>
-                  <h4 className={`font-black tracking-[0.1em] text-lg ${activeLocation.id === loc.id ? loc.color.replace('400', '700') : 'text-slate-700'}`}>{loc.name}</h4>
-                  <p className="text-xs text-slate-500 font-mono tracking-[0.2em] uppercase">{loc.subtitle}</p>
+                  <h4 className={`font-black tracking-[0.1em] text-sm md:text-lg ${activeLocation.id === loc.id ? loc.color.replace('400', '700') : 'text-slate-700'}`}>{loc.name}</h4>
+                  <p className="text-[10px] md:text-xs text-slate-500 font-mono tracking-[0.2em] uppercase truncate w-32 md:w-auto">{loc.subtitle}</p>
                 </div>
               </div>
             </button>
@@ -106,8 +118,12 @@ export default function WorldMap() {
         </div>
 
         {/* Map Detail */}
-        <div className="w-full lg:w-2/3 relative overflow-hidden border border-cyan-200 shadow-md group game-panel bg-white aspect-video">
-          <AnimatePresence mode="wait">
+        <div className="w-full lg:w-2/3 flex flex-col gap-4">
+          <div 
+            className="w-full relative overflow-hidden border border-cyan-200 shadow-md group game-panel bg-white aspect-[4/3] md:aspect-video cursor-pointer"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <AnimatePresence mode="wait">
             <motion.div
               key={activeLocation.id}
               initial={{ opacity: 0, scale: 1.05 }}
@@ -135,15 +151,101 @@ export default function WorldMap() {
                     <span className="text-[10px] md:text-xs font-mono tracking-[0.1em] uppercase">{activeLocation.subtitle}</span>
                   </div>
                   <h3 className="text-xl md:text-4xl font-black tracking-[0.05em] mb-1 md:mb-2 text-white drop-shadow-md">{activeLocation.name}</h3>
-                  <p className="text-slate-200 text-[10px] md:text-sm leading-relaxed max-w-2xl font-medium bg-slate-900/60 p-2 md:p-3 backdrop-blur-sm border border-white/10 shadow-sm line-clamp-4 md:line-clamp-4">
+                  {/* Hide description on mobile to save space, show in modal */}
+                  <p className="hidden md:block text-slate-200 text-sm leading-relaxed max-w-2xl font-medium bg-slate-900/60 p-3 backdrop-blur-sm border border-white/10 shadow-sm line-clamp-4">
                     {activeLocation.desc}
+                  </p>
+                  <p className="md:hidden text-cyan-300 text-[10px] font-mono tracking-widest mt-2 animate-pulse">
+                    TAP TO VIEW DETAILS
                   </p>
                 </motion.div>
               </div>
             </motion.div>
-          </AnimatePresence>
+            </AnimatePresence>
+          </div>
+          
+          {/* Decorative Terminal/Status panel to utilize whitespace */}
+          <div className="flex flex-col md:flex-row w-full border border-slate-200 bg-white p-3 md:p-4 shadow-sm items-start md:items-center justify-between font-mono text-[10px] md:text-xs text-slate-500 gap-3 md:gap-0">
+            <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                <span>SYS.ONLINE</span>
+              </div>
+              <div className="hidden md:block w-[1px] h-4 bg-slate-200"></div>
+              <span className="bg-slate-100 px-2 py-1 rounded-sm">REGION: {activeLocation.id.toUpperCase()}</span>
+            </div>
+            
+            <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto justify-between md:justify-end border-t border-slate-100 md:border-t-0 pt-2 md:pt-0">
+              <div className="flex flex-col">
+                <span className="text-[8px] text-slate-400">LATITUDE</span>
+                <span className="text-cyan-600">{(Math.random() * 90).toFixed(4)}° N</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[8px] text-slate-400">LONGITUDE</span>
+                <span className="text-cyan-600">{(Math.random() * 180).toFixed(4)}° E</span>
+              </div>
+              <div className="w-[1px] h-6 bg-slate-200"></div>
+              <div className="flex gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className={`w-1 h-4 ${i < 3 ? 'bg-cyan-500' : 'bg-slate-200'}`}></div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Detail Modal */}
+      {mounted && createPortal(
+        <AnimatePresence>
+          {isModalOpen && (
+            <motion.div
+              key="map-modal"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm"
+              onClick={() => setIsModalOpen(false)}
+            >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="bg-white w-full max-w-4xl overflow-y-auto max-h-[90vh] shadow-2xl border border-cyan-500/30 custom-scrollbar flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="relative w-full bg-slate-900 border-b border-cyan-500/20 shrink-0 flex items-center justify-center">
+                <img 
+                  src={activeLocation.bgImage} 
+                  alt={activeLocation.name}
+                  referrerPolicy="no-referrer"
+                  className="w-full h-auto max-h-[40vh] md:max-h-[60vh] object-contain"
+                />
+                <button 
+                  onClick={() => setIsModalOpen(false)}
+                  className="absolute top-4 right-4 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full backdrop-blur-md transition-colors z-10"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+              </div>
+              
+              <div className="p-6 md:p-8 bg-slate-50 shrink-0">
+                <div className={`inline-flex items-center gap-2 px-3 py-1 bg-white border border-slate-200 mb-4 ${activeLocation.color.replace('400', '600')} shadow-sm`}>
+                  {activeLocation.icon}
+                  <span className="text-xs font-mono tracking-[0.1em] uppercase font-bold">{activeLocation.subtitle}</span>
+                </div>
+                <h3 className="text-2xl md:text-4xl font-black tracking-[0.05em] mb-4 text-slate-900">{activeLocation.name}</h3>
+                <div className="h-[2px] w-16 bg-cyan-500 mb-6" />
+                <p className="text-slate-700 text-sm md:text-base leading-relaxed font-medium break-words whitespace-pre-wrap">
+                  {activeLocation.desc}
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>,
+      document.body
+    )}
+  </div>
   );
 }

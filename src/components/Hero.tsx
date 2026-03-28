@@ -1,8 +1,44 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronRight, PlayCircle } from 'lucide-react';
 
 export default function Hero({ setActiveTab }: { setActiveTab: (tab: string) => void }) {
+  useEffect(() => {
+    let touchStartY = 0;
+    let isNavigating = false;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (isNavigating) return;
+      if (e.deltaY > 20) {
+        isNavigating = true;
+        setActiveTab('worldview');
+      }
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (isNavigating) return;
+      const touchEndY = e.touches[0].clientY;
+      if (touchStartY - touchEndY > 30) { // Swiped up (scrolled down)
+        isNavigating = true;
+        setActiveTab('worldview');
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: true });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, [setActiveTab]);
+
   return (
     <div className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-slate-50">
       {/* Background Image */}

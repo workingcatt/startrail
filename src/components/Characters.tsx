@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 
@@ -66,19 +67,25 @@ export default function Characters() {
     return `https://working-cat.org/startrail/${code}/1.png`;
   };
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
   return (
     <div className="max-w-7xl mx-auto px-6 py-20 bg-slate-50 min-h-screen">
-      <div className="text-center mb-16">
-        <h2 className="text-4xl md:text-5xl font-black tracking-[0.2em] mb-6 text-slate-900 drop-shadow-sm">CHARACTERS</h2>
-        <div className="flex flex-wrap justify-center gap-2">
+      <div className="text-center mb-10 md:mb-16">
+        <h2 className="text-3xl md:text-5xl font-black tracking-[0.2em] mb-6 text-slate-900 drop-shadow-sm">STUDENT RECORDS</h2>
+        <div className="flex flex-wrap justify-center gap-2 px-2">
           {Object.keys(factions).map((faction) => (
             <button
               key={faction}
               onClick={() => setSelectedFaction(faction)}
-              className={`px-4 py-2 text-sm font-bold tracking-widest transition-all ${
+              className={`px-3 py-1.5 md:px-4 md:py-2 text-[10px] md:text-sm font-bold tracking-widest transition-all border ${
                 selectedFaction === faction 
-                  ? 'bg-cyan-600 text-white shadow-lg' 
-                  : 'bg-white text-slate-600 hover:bg-slate-100'
+                  ? 'bg-slate-900 text-white border-slate-900 shadow-md' 
+                  : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-100 hover:border-slate-400'
               }`}
             >
               {faction}
@@ -91,101 +98,172 @@ export default function Characters() {
         key={selectedFaction}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
       >
         {factions[selectedFaction as keyof typeof factions].map((char) => (
           <div 
             key={char.name} 
             onClick={() => setSelectedChar(char)}
-            className="bg-white p-4 border border-slate-200 shadow-sm hover:shadow-md transition-shadow group cursor-pointer"
+            className="bg-[#fdfbf7] p-4 md:p-5 border-2 border-slate-300 shadow-[2px_4px_10px_rgba(0,0,0,0.05)] hover:shadow-[4px_8px_15px_rgba(0,0,0,0.1)] hover:-translate-y-1 transition-all group cursor-pointer relative overflow-hidden"
           >
-            <div className="aspect-square mb-4 overflow-hidden bg-slate-100">
+            {/* Document styling elements */}
+            <div className="absolute top-0 right-0 w-12 h-12 bg-red-500/10 border-l border-b border-red-500/20 flex items-center justify-center transform translate-x-4 -translate-y-4 rotate-45 group-hover:bg-red-500/20 transition-colors">
+              <span className="text-[8px] font-black text-red-600/50 tracking-widest uppercase -rotate-45 mt-4 ml-2">CONFIDENTIAL</span>
+            </div>
+            <div className="absolute top-2 left-2 w-8 h-2 border-t-2 border-l-2 border-slate-300"></div>
+            <div className="absolute bottom-2 right-2 w-8 h-2 border-b-2 border-r-2 border-slate-300"></div>
+            
+            <div className="flex justify-between items-start mb-3 border-b-2 border-slate-800 pb-2">
+              <div>
+                <p className="text-[9px] md:text-[10px] text-slate-500 font-mono tracking-widest uppercase mb-0.5">ID: {char.code}-{Math.floor(Math.random() * 9000) + 1000}</p>
+                <h4 className="text-lg md:text-xl font-black text-slate-900 tracking-tight">{char.name}</h4>
+              </div>
+              <div className="bg-slate-900 text-white px-2 py-1 text-xs font-bold font-mono">
+                {char.grade}
+              </div>
+            </div>
+
+            <div className="aspect-video mb-4 overflow-hidden bg-slate-200 border border-slate-300 relative p-1">
+              <div className="absolute inset-0 border border-dashed border-slate-400 m-1 pointer-events-none z-10"></div>
               <img 
                 src={getRandomImage(char.code)} 
                 alt={char.name}
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                className="w-full h-full object-cover grayscale-[20%] contrast-125 group-hover:grayscale-0 transition-all duration-500"
                 onError={(e) => (e.currentTarget.style.display = 'none')}
               />
             </div>
-            <h4 className="text-lg font-black text-slate-900 mb-1">{char.name}</h4>
-            <p className="text-xs text-slate-500 font-mono tracking-widest uppercase mb-3">CODE: {char.code}</p>
-            <p className="text-sm text-slate-600 leading-relaxed line-clamp-3">{char.desc}</p>
+            
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold text-slate-500 uppercase w-12">Class:</span>
+                <span className="text-xs font-medium text-slate-800 bg-slate-200 px-1.5 py-0.5 rounded-sm">{char.desc.split('·')[0].trim()}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-bold text-slate-500 uppercase w-12">Status:</span>
+                <span className="text-xs font-medium text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-sm">ACTIVE</span>
+              </div>
+            </div>
           </div>
         ))}
       </motion.div>
 
-      <AnimatePresence>
-        {selectedChar && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={() => setSelectedChar(null)}
-          >
+      {mounted && createPortal(
+        <AnimatePresence>
+          {selectedChar && (
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white p-4 md:p-8 rounded-lg shadow-2xl max-w-lg w-full relative max-h-[90vh] overflow-y-auto"
+              key="char-modal"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-2 md:p-4"
+              onClick={() => setSelectedChar(null)}
+            >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="bg-[#fdfbf7] p-3 md:p-8 shadow-2xl max-w-2xl w-[95vw] md:w-full relative max-h-[85vh] md:max-h-[90vh] overflow-y-auto overflow-x-hidden border-2 border-slate-800 custom-scrollbar flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Document styling */}
+              <div className="absolute top-0 left-0 w-full h-2 bg-slate-800 shrink-0"></div>
+              <div className="absolute top-6 right-6 md:top-8 md:right-8 w-12 h-12 md:w-16 md:h-16 border-4 border-red-600/30 rounded-full flex items-center justify-center rotate-12 pointer-events-none">
+                <span className="text-red-600/30 font-black text-[10px] md:text-sm tracking-widest -rotate-12">APPROVED</span>
+              </div>
+
               <button 
                 onClick={() => setSelectedChar(null)}
-                className="absolute top-2 right-2 md:top-4 md:right-4 text-slate-500 hover:text-slate-800"
+                className="absolute top-3 right-3 md:top-6 md:right-6 text-slate-500 hover:text-slate-900 bg-white/80 p-1 rounded-full backdrop-blur-sm z-10"
               >
-                <X size={20} />
+                <X size={20} className="md:w-6 md:h-6" />
               </button>
-              <div className="flex flex-col md:flex-row gap-4 md:gap-6">
-                <div className="w-full md:w-1/3 aspect-video overflow-hidden bg-slate-100 rounded-lg border-2 md:border-4 border-slate-900">
-                  <img 
-                    src={getRandomImage(selectedChar.code)} 
-                    alt={selectedChar.name}
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover"
-                    onError={(e) => (e.currentTarget.style.display = 'none')}
-                  />
+              
+              <div className="flex flex-col gap-3 md:gap-8 mt-2 md:mt-4 shrink-0">
+                <div className="w-full flex flex-col gap-2">
+                  <div className="w-full overflow-hidden bg-slate-200 border-2 border-slate-800 p-1 relative shadow-inner flex items-center justify-center">
+                    <img 
+                      src={getRandomImage(selectedChar.code)} 
+                      alt={selectedChar.name}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-auto max-h-[35vh] md:max-h-[45vh] object-contain grayscale-[10%] contrast-110"
+                      onError={(e) => (e.currentTarget.style.display = 'none')}
+                    />
+                    <div className="absolute bottom-2 right-2 bg-black/70 text-white text-[8px] font-mono px-1 py-0.5">
+                      IMG_REF_{selectedChar.code}
+                    </div>
+                  </div>
+                  {/* Barcode mock */}
+                  <div className="h-4 md:h-8 w-full flex justify-between items-end px-2 opacity-60">
+                    {[...Array(40)].map((_, i) => (
+                      <div key={i} className={`bg-slate-800 ${Math.random() > 0.5 ? 'w-1' : 'w-0.5'} ${Math.random() > 0.3 ? 'h-full' : 'h-3/4'}`}></div>
+                    ))}
+                  </div>
                 </div>
                 
-                <div className="w-full md:w-2/3">
-                  <div className="border-b-2 border-slate-900 pb-1 mb-2 md:pb-2 md:mb-4">
-                    <h3 className="text-2xl md:text-3xl font-black text-slate-900 mb-0.5 md:mb-1 tracking-tighter">{selectedChar.name}</h3>
-                    <div className="flex justify-between items-center text-[10px] md:text-xs font-mono uppercase tracking-widest">
-                      <span className="text-slate-500">Code: {selectedChar.code}</span>
-                      <span className="bg-slate-900 text-white px-2 py-0.5">Grade: {selectedChar.grade}</span>
+                <div className="w-full flex flex-col shrink-0">
+                  <div className="border-b-4 border-slate-800 pb-2 md:pb-3 mb-3 md:mb-4">
+                    <div className="flex justify-between items-start mb-1">
+                      <h3 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tighter uppercase truncate pr-2">{selectedChar.name}</h3>
+                      <div className="bg-slate-900 text-white px-2 py-0.5 md:px-3 md:py-1 text-sm md:text-lg font-black font-mono border-2 border-slate-900 shadow-[2px_2px_0_#cbd5e1] shrink-0">
+                        {selectedChar.grade}
+                      </div>
+                    </div>
+                    <div className="flex gap-3 md:gap-4 text-[10px] md:text-xs font-mono uppercase tracking-widest text-slate-600">
+                      <span><strong className="text-slate-900">CODE:</strong> {selectedChar.code}</span>
+                      <span><strong className="text-slate-900">STATUS:</strong> ACTIVE</span>
                     </div>
                   </div>
                   
-                  <div className="space-y-2 mb-3 md:space-y-3 md:mb-4">
-                    <div>
-                      <div className="flex justify-between text-[10px] md:text-xs font-bold mb-0.5"><span>POWER</span><span>85%</span></div>
-                      <div className="h-1.5 md:h-2 bg-slate-200 rounded-full overflow-hidden"><div className="h-full bg-cyan-600 w-[85%]"></div></div>
+                  <div className="space-y-3 md:space-y-4 mb-4 md:mb-6 flex-grow">
+                    <div className="bg-slate-100 p-3 md:p-4 border border-slate-300 relative">
+                      <div className="absolute -top-2 left-4 bg-[#fdfbf7] px-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Personal Details</div>
+                      <ul className="text-slate-800 leading-relaxed text-xs md:text-sm space-y-1.5 md:space-y-2 break-words whitespace-pre-wrap">
+                        {selectedChar.desc.split('|').map((item: string, index: number) => {
+                          const [label, ...rest] = item.split(':');
+                          if (rest.length > 0) {
+                            return (
+                              <li key={index} className="flex flex-col sm:flex-row sm:gap-2 border-b border-slate-200 pb-1 last:border-0 last:pb-0">
+                                <span className="font-bold text-slate-900 min-w-[40px] shrink-0">{label.trim()}:</span>
+                                <span>{rest.join(':').trim()}</span>
+                              </li>
+                            );
+                          }
+                          return <li key={index} className="border-b border-slate-200 pb-1 last:border-0 last:pb-0">{item.trim()}</li>;
+                        })}
+                      </ul>
                     </div>
-                    <div>
-                      <div className="flex justify-between text-[10px] md:text-xs font-bold mb-0.5"><span>SPEED</span><span>92%</span></div>
-                      <div className="h-1.5 md:h-2 bg-slate-200 rounded-full overflow-hidden"><div className="h-full bg-cyan-600 w-[92%]"></div></div>
+                    
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex justify-between text-[10px] font-bold mb-1 uppercase tracking-widest text-slate-600"><span>Combat Power</span><span>85%</span></div>
+                        <div className="h-1.5 md:h-2 bg-slate-200 border border-slate-300 overflow-hidden"><div className="h-full bg-slate-800 w-[85%]"></div></div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-[10px] font-bold mb-1 uppercase tracking-widest text-slate-600"><span>Agility</span><span>92%</span></div>
+                        <div className="h-1.5 md:h-2 bg-slate-200 border border-slate-300 overflow-hidden"><div className="h-full bg-slate-800 w-[92%]"></div></div>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="bg-slate-100 p-2 md:p-3 rounded border border-slate-300">
-                    <h4 className="font-bold text-slate-900 mb-1 text-xs md:text-sm border-b border-slate-300 pb-0.5">Profile</h4>
-                    <ul className="text-slate-700 leading-relaxed text-[11px] md:text-xs list-disc pl-4 space-y-0.5">
-                      {selectedChar.desc.split('|').map((item: string, index: number) => (
-                        <li key={index}>{item.trim()}</li>
-                      ))}
-                    </ul>
+                  
+                  <div className="mt-auto pt-3 md:pt-4 border-t-2 border-slate-300 flex justify-between items-end shrink-0">
+                    <div className="text-[9px] md:text-[10px] text-slate-500 font-mono uppercase leading-tight">
+                      Startrail Academy<br/>
+                      Department of Records<br/>
+                      Auth: {Math.random().toString(36).substring(2, 8).toUpperCase()}
+                    </div>
+                    <div className="w-12 h-12 md:w-16 md:h-16 border-2 border-slate-800 rounded-full flex items-center justify-center shrink-0">
+                      <span className="text-slate-800 font-black text-[6px] md:text-[8px] text-center leading-none">OFFICIAL<br/>SEAL</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              
-              <div className="mt-3 md:mt-4 text-center text-[9px] md:text-[10px] text-slate-400 font-mono uppercase">
-                Startrail Academy Official Record
               </div>
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
-    </div>
+      </AnimatePresence>,
+      document.body
+    )}
+  </div>
   );
 }

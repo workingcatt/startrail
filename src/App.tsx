@@ -20,13 +20,14 @@ export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(0.4);
   const [entered, setEntered] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (audio) {
-      audio.volume = 0.4;
+      audio.volume = volume;
       
       // Sync state with actual audio state
       const syncState = () => {
@@ -53,6 +54,12 @@ export default function App() {
       };
     }
   }, [isPlaying]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
 
   // BGM Logic
   const toggleBGM = () => {
@@ -245,36 +252,61 @@ export default function App() {
 
                 {/* BGM Toggle - Restored to Header */}
                 <div className="flex items-center gap-2 ml-4">
-                  <button 
-                    onClick={toggleBGM}
-                    className="flex items-center gap-2 px-3 py-1.5 border border-slate-200 hover:border-cyan-500 text-cyan-600 transition-all bg-white shadow-sm font-mono text-[10px] font-bold tracking-widest"
-                    title="Toggle BGM"
-                  >
-                    {isPlaying ? (
-                      <>
-                        <Music className="w-3.5 h-3.5 animate-pulse" /> BGM ON
-                      </>
-                    ) : (
-                      <>
-                        <Music2 className="w-3.5 h-3.5 opacity-50" /> BGM OFF
-                      </>
-                    )}
-                  </button>
+                  <div className="flex items-center gap-2 px-3 py-1.5 border border-slate-200 bg-white shadow-sm">
+                    <button 
+                      onClick={toggleBGM}
+                      className="flex items-center gap-2 text-cyan-600 transition-all font-mono text-[10px] font-bold tracking-widest hover:text-cyan-500"
+                      title="Toggle BGM"
+                    >
+                      {isPlaying ? (
+                        <>
+                          <Music className="w-3.5 h-3.5 animate-pulse" /> BGM ON
+                        </>
+                      ) : (
+                        <>
+                          <Music2 className="w-3.5 h-3.5 opacity-50" /> BGM OFF
+                        </>
+                      )}
+                    </button>
+                    <div className="w-[1px] h-4 bg-slate-200 mx-1"></div>
+                    <input 
+                      type="range" 
+                      min="0" 
+                      max="1" 
+                      step="0.01" 
+                      value={volume} 
+                      onChange={(e) => setVolume(parseFloat(e.target.value))}
+                      className="w-16 h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                      title="Volume"
+                    />
+                  </div>
                 </div>
               </div>
 
               {/* Mobile Nav Toggle */}
               <div className="md:hidden flex items-center gap-3">
-                <button 
-                  onClick={toggleBGM} 
-                  className="flex items-center gap-1.5 text-cyan-600 px-2.5 py-1.5 border border-slate-200 bg-white shadow-sm font-mono text-[10px] font-bold tracking-wider"
-                >
-                  {isPlaying ? (
-                    <><Music className="w-3 h-3 animate-pulse" /> ON</>
-                  ) : (
-                    <><Music2 className="w-3 h-3 opacity-50" /> OFF</>
-                  )}
-                </button>
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 border border-slate-200 bg-white shadow-sm">
+                  <button 
+                    onClick={toggleBGM} 
+                    className="flex items-center gap-1.5 text-cyan-600 font-mono text-[10px] font-bold tracking-wider"
+                  >
+                    {isPlaying ? (
+                      <><Music className="w-3 h-3 animate-pulse" /> ON</>
+                    ) : (
+                      <><Music2 className="w-3 h-3 opacity-50" /> OFF</>
+                    )}
+                  </button>
+                  <div className="w-[1px] h-3 bg-slate-200 mx-1"></div>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="1" 
+                    step="0.01" 
+                    value={volume} 
+                    onChange={(e) => setVolume(parseFloat(e.target.value))}
+                    className="w-12 h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                  />
+                </div>
                 <button 
                   className="text-slate-900 p-1.5 border border-slate-200 bg-white shadow-sm"
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

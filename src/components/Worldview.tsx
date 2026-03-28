@@ -43,12 +43,12 @@ export default function Worldview() {
         </svg>
       </div>
 
-      <div className="text-center mb-20">
+      <div className="text-center mb-12 md:mb-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="inline-flex items-center gap-2 px-3 py-1 border border-cyan-500/50 bg-white/80 text-cyan-600 text-xs font-mono tracking-[0.3em] mb-6 backdrop-blur-sm shadow-sm"
+          className="inline-flex items-center gap-2 px-3 py-1 border border-cyan-500/50 bg-white/80 text-cyan-600 text-[10px] md:text-xs font-mono tracking-[0.3em] mb-4 md:mb-6 backdrop-blur-sm shadow-sm"
         >
           <span className="w-2 h-2 bg-cyan-500 animate-pulse"></span>
           DATABASE: WORLDVIEW
@@ -57,7 +57,7 @@ export default function Worldview() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-4xl md:text-5xl font-black tracking-[0.2em] mb-6 text-slate-900 drop-shadow-sm"
+          className="text-3xl md:text-5xl font-black tracking-[0.2em] mb-4 md:mb-6 text-slate-900 drop-shadow-sm"
         >
           WORLDVIEW
         </motion.h2>
@@ -66,14 +66,14 @@ export default function Worldview() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="h-[1px] w-32 bg-gradient-to-r from-transparent via-cyan-500 to-transparent mx-auto mb-8"
+          className="h-[1px] w-24 md:w-32 bg-gradient-to-r from-transparent via-cyan-500 to-transparent mx-auto mb-6 md:mb-8"
         />
         <motion.p 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.3 }}
-          className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium"
+          className="text-sm md:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium px-4"
         >
           현대적인 도시의 이면에 숨겨진 마법과 기계, 그리고 다양한 종족들이 공존하는 어반 판타지 세계.
           17세 이상의 청소년 중 일부는 자신의 종족, 소망, 꿈을 바탕으로 특별한 능력을 각성하게 됩니다.
@@ -81,7 +81,7 @@ export default function Worldview() {
         </motion.p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center mb-20 lg:mb-32">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center mb-16 md:mb-32">
         <motion.div 
           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -89,18 +89,18 @@ export default function Worldview() {
           className="relative aspect-video overflow-hidden border border-cyan-500/30 shadow-md game-panel bg-white"
         >
           <img 
-            src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?q=80&w=1000&auto=format&fit=crop" 
+            src="https://working-cat.org/startrail/BACK/%EC%8A%A4%ED%83%80%ED%8A%B8%EB%A0%88%EC%9D%BC%20%EC%95%84%EC%B9%B4%EB%8D%B0%EB%AF%B81.png" 
             alt="Academy" 
             referrerPolicy="no-referrer"
-            className="w-full h-full object-cover opacity-80 scale-105 mix-blend-multiply"
+            className="w-full h-full object-cover opacity-90 scale-105 mix-blend-multiply"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-white via-white/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
           <div className="absolute bottom-4 left-4 right-4 md:bottom-8 md:left-8 md:right-8">
-            <h3 className="text-xl md:text-3xl font-black tracking-[0.1em] mb-2 flex items-center gap-2 text-slate-900 drop-shadow-sm">
-              <Sparkles className="text-cyan-500 w-6 h-6 md:w-8 md:h-8" />
+            <h3 className="text-lg md:text-3xl font-black tracking-[0.1em] mb-2 flex items-center gap-2 text-slate-900 drop-shadow-sm">
+              <Sparkles className="text-cyan-500 w-5 h-5 md:w-8 md:h-8" />
               스타트레일 특수 아카데미
             </h3>
-            <p className="text-xs md:text-base text-slate-600 font-medium bg-white/90 p-2 md:p-3 backdrop-blur-sm border border-cyan-200 game-panel-sm shadow-sm">
+            <p className="text-[10px] md:text-base text-slate-600 font-medium bg-white/90 p-2 md:p-3 backdrop-blur-sm border border-cyan-200 game-panel-sm shadow-sm leading-relaxed">
               특수 학생들을 교육하고 그들의 잃어버린 꿈을 일깨워주기 위한 비밀 기관.
             </p>
           </div>
@@ -110,29 +110,29 @@ export default function Worldview() {
           initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="space-y-6 bg-white/80 backdrop-blur-md border border-cyan-200 p-8 shadow-md relative game-panel"
+          className="space-y-4 md:space-y-6 bg-white/80 backdrop-blur-md border border-cyan-200 p-6 md:p-8 shadow-md relative game-panel"
         >
           {/* Decorative corners */}
           <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-cyan-500"></div>
           <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-cyan-500"></div>
 
-          <h3 className="text-3xl font-black tracking-[0.1em] text-slate-900 flex items-center gap-3">
+          <h3 className="text-2xl md:text-3xl font-black tracking-[0.1em] text-slate-900 flex items-center gap-2 md:gap-3">
             <span className="text-cyan-500">능력의</span> 각성
           </h3>
-          <p className="text-slate-600 leading-relaxed font-medium">
+          <p className="text-sm md:text-base text-slate-600 leading-relaxed font-medium">
             세계의 이면에는 평범한 일상을 살아가는 이들이 모르는 거대한 흐름이 존재합니다. 
             어느 날 갑자기 발현되는 능력은 축복일 수도, 저주일 수도 있습니다. 
             스타트레일 아카데미는 이 혼란스러운 변화를 겪는 아이들을 찾아내어 올바른 길로 인도합니다.
           </p>
-          <ul className="space-y-4 mt-8">
+          <ul className="space-y-3 md:space-y-4 mt-6 md:mt-8">
             {[
               '자신의 진정한 꿈을 찾는 여정',
               '다양한 종족과의 만남과 갈등',
               '세계를 위협하는 언노운과의 대립'
             ].map((item, i) => (
-              <li key={i} className="flex items-center gap-3 text-slate-700 font-bold">
-                <div className="w-2 h-2 rotate-45 bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.4)]" />
-                {item}
+              <li key={i} className="flex items-center gap-2 md:gap-3 text-sm md:text-base text-slate-700 font-bold">
+                <div className="w-1.5 h-1.5 md:w-2 md:h-2 rotate-45 bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.4)] flex-shrink-0" />
+                <span className="leading-tight">{item}</span>
               </li>
             ))}
           </ul>
